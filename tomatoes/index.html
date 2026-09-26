@@ -17,6 +17,7 @@
     .card { min-width: 0; border-radius: 24px; background: #fff; padding: clamp(12px, 3vw, 24px); box-shadow: 0 6px 22px #2b261b0d; text-align: center; }
     .art { display: grid; place-items: center; min-height: 200px; aspect-ratio: 1; border-radius: 17px; background: #f8f6f1; }
     .art img { display: block; width: min(100%, 320px); aspect-ratio: 1; object-fit: contain; }
+    .cherry img { transform: scale(.73); }
     h2 { margin: 17px 0 3px; font-size: clamp(18px, 3vw, 24px); }
     .small { margin-top: 32px; padding: 24px; border-radius: 24px; background: #fff; }
     .small h2 { margin: 0 0 5px; }
@@ -36,14 +37,14 @@
 <body>
   <main>
     <h1>Tomato icons, side by side</h1>
-    <p>Both images use the same square canvas, so their visible size difference stays intact.</p>
+    <p>The yellow cherry tomato is shown at about half the normal tomato's visible width.</p>
     <div class="pair" aria-label="Tomato icon comparison">
       <section class="card">
         <div class="art"><img src="normal-tomato.webp" alt="Large glossy red tomato with green stem"></div>
         <h2>Normal tomato</h2>
         <p>Red · full size</p>
       </section>
-      <section class="card">
+      <section class="card cherry">
         <div class="art"><img src="yellow-cherry-tomato.webp" alt="Smaller glossy yellow cherry tomato with green stem"></div>
         <h2>Cherry tomato</h2>
         <p>Yellow · smaller</p>
@@ -54,7 +55,7 @@
       <p>Each image is shown in the same 64 px box.</p>
       <div class="pair">
         <div class="sample"><img src="normal-tomato.webp" alt="Normal tomato at app size"><span>Normal</span></div>
-        <div class="sample"><img src="yellow-cherry-tomato.webp" alt="Cherry tomato at app size"><span>Cherry</span></div>
+        <div class="sample cherry"><img src="yellow-cherry-tomato.webp" alt="Cherry tomato at app size"><span>Cherry</span></div>
       </div>
     </section>
   </main>
