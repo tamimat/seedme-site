@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SeedMe Sign In</title><meta name="robots" content="noindex">
+<link rel="icon" href="/icon.png"><link rel="stylesheet" href="/style.css"></head><body><main>
+<h1>Sign in</h1>
+<p><a id="open" href="seedme://signin">Open SeedMe</a></p>
+<p class="mute">Open this link on the iPhone that has SeedMe.</p>
+<script>
+// Firebase's email link lands here with the code in the query; hand it to the app.
+var to = 'seedme://signin' + location.search;
+document.getElementById('open').href = to;
+if (/[?&]oobCode=/.test(location.search)) location.replace(to);
+</script>
+</main></body></html>
