@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SeedMe</title><meta name="robots" content="noindex">
+<link rel="icon" href="/icon.png"><link rel="stylesheet" href="/style.css"></head><body><main>
+<h1 id="title">Not found</h1>
+<p id="go"><a href="/">SeedMe</a></p>
+<p class="mute" id="note"></p>
+<script>
+// Friend invitations are https://seedme.food/i/<code> (tappable in every messenger).
+// GitHub Pages has no routes, so they land on this page; hand the code to the app.
+var m = location.pathname.match(/^\/i\/([A-Za-z0-9]{12})\/?$/);
+if (m) {
+  var to = 'seedme://add-friend?code=' + m[1];
+  document.title = 'SeedMe Invitation';
+  document.getElementById('title').textContent = 'Friend invitation';
+  document.getElementById('go').innerHTML = '<a href="' + to + '">Open SeedMe</a>';
+  document.getElementById('note').textContent = 'Open this link on the iPhone that has SeedMe. It works once, for 24 hours.';
+  location.replace(to);
+}
+</script>
+</main></body></html>
