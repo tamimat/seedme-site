@@ -1,7 +1,21 @@
 {
   "applinks": {
     "details": [
-      { "appIDs": ["M89YS97P95.com.seedme.health"], "components": [{ "/": "/i/*", "comment": "Friend invitations" }] }
+      {
+        "appIDs": [
+          "M89YS97P95.com.seedme.health"
+        ],
+        "components": [
+          {
+            "/": "/i/*",
+            "comment": "Friend invitations"
+          },
+          {
+            "/": "/h/*",
+            "comment": "A part of the app explained, shared from its help card"
+          }
+        ]
+      }
     ]
   }
 }

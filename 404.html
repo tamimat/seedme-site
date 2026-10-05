@@ -16,5 +16,20 @@ if (m) {
   document.getElementById('note').textContent = 'Open this link on the iPhone that has SeedMe. It works once, for 24 hours.';
   location.replace(to);
 }
+// A part of the app explained, shared from its help card: https://seedme.food/h/<part>
+// (2026-10-05). Opened where SeedMe is installed, the app takes the link itself; here the
+// explanation is shown as text, with a way into the app.
+var h = location.pathname.match(/^\/h\/([A-Za-z]+)\/?$/);
+if (h) {
+  var app = 'seedme://h/' + h[1];
+  document.title = 'SeedMe';
+  document.getElementById('title').textContent = 'SeedMe';
+  document.getElementById('go').innerHTML = '<a href="' + app + '">Open SeedMe</a>';
+  var lang = (navigator.language || 'en').slice(0, 2) === 'de' ? 'de' : 'en';
+  fetch('/help-lines.json').then(function (r) { return r.json(); }).then(function (all) {
+    var line = (all[lang] || {})[h[1]] || (all.en || {})[h[1]];
+    if (line) document.getElementById('note').textContent = line.replace(/<[^>]*>/g, '');
+  }).catch(function () {});
+}
 </script>
 </main></body></html>
