@@ -1,0 +1,16 @@
+// seedme.food on Cloudflare (Workers static assets, 2026-10-05; GitHub Pages before).
+// Deploy: npx wrangler deploy (from this folder).
+{
+  "name": "seedme-site",
+  "compatibility_date": "2026-10-05",
+  // The live domain; Cloudflare keeps its DNS records itself (the GitHub ones were removed).
+  "routes": [
+    { "pattern": "seedme.food", "custom_domain": true },
+    { "pattern": "www.seedme.food", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": ".",
+    // /i/<code> and /h/<part> have no files: 404.html hands them to the app.
+    "not_found_handling": "404-page"
+  }
+}
