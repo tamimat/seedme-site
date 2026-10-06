@@ -72,7 +72,9 @@
   "goalActivities": "the activities that reach your goal",
   "offline": "the cloud that shows you are offline",
   "fiber": "your fibre today and your fibre goal",
-  "genesis": "your first seed and your very first tree"
+  "genesis": "your first seed and your very first tree",
+  "noteBird": "a friend's bird and the voice note it brings you",
+  "noteCloud": "the cloud where more friends' birds wait"
  },
  "de": {
   "bulb": "die Glühbirne und wie sie alles erklärt, worauf du sie ziehst",
@@ -147,6 +149,8 @@
   "goalActivities": "die Aktivitäten, mit denen du dein Ziel erreichst",
   "offline": "die Wolke, die zeigt, dass du offline bist",
   "fiber": "deine Ballaststoffe heute und dein Ballaststoffziel",
-  "genesis": "deinen ersten Samen und deinen allerersten Baum"
+  "genesis": "deinen ersten Samen und deinen allerersten Baum",
+  "noteBird": "den Vogel eines Freundes und die Sprachnachricht, die er dir bringt",
+  "noteCloud": "die Wolke, in der weitere Vögel von Freunden warten"
  }
 }
