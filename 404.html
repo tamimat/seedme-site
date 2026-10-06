@@ -1,17 +1,16 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SeedMe</title><meta name="robots" content="noindex">
-<link rel="icon" href="/icon.png"><link rel="stylesheet" href="/style.css">
+<link rel="icon" href="/seed-icon.png"><link rel="stylesheet" href="/style.css">
 <style>
 /* Shared links (/i/, /h/): one short line, one big button, centred (2026-10-06). */
 main.share{min-height:100vh;min-height:100svh;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 24px}
-main.share img{width:84px;height:84px;border-radius:20px;margin-bottom:28px}
-main.share h1{font-size:34px;line-height:1.2;letter-spacing:-.02em;margin:0 0 32px;max-width:14em}
-.btn{display:inline-block;min-width:220px;padding:18px 32px;border-radius:999px;background:var(--accent);color:#fff;font-size:20px;font-weight:600;text-decoration:none}
+main.share img{width:112px;height:112px;border-radius:26px;margin-bottom:28px}
+main.share h1{font-size:26px;line-height:1.25;letter-spacing:-.01em;margin:0 0 28px;max-width:15em}
+.btn{display:inline-block;min-width:180px;padding:14px 28px;border-radius:999px;background:var(--accent);color:var(--bg);font-size:17px;font-weight:600;text-decoration:none}
 .btn:active{opacity:.8}
-@media (prefers-color-scheme:dark){.btn{color:#0e1117}}
 main.share .mute{margin-top:28px;max-width:26em;font-size:17px;line-height:1.5}
 </style></head><body><main id="main">
-<img src="/icon.png" alt="SeedMe">
+<img src="/seed-icon.png" alt="SeedMe">
 <h1 id="title">Not found</h1>
 <p id="go"><a href="/">SeedMe</a></p>
 <p class="mute" id="note"></p>
@@ -38,21 +37,26 @@ if (m) {
   location.replace(to);
 }
 // A part of the app, shared from its help card: https://seedme.food/h/<part> (2026-10-05).
-// Where SeedMe is installed the app takes the link itself. Here: the part's first sentence
-// and one button; the full explanation shows only if the app did not open.
+// Where SeedMe is installed the app takes the link itself. Here: one line naming the part
+// (help-about.json) and one button; the full line shows only if the app did not open.
 var h = location.pathname.match(/^\/h\/([A-Za-z]+)\/?$/);
 if (h) {
-  var btn = share('SeedMe', 'seedme://h/' + h[1], de ? 'Tipp, um mehr zu erfahren' : 'Tap to learn more');
+  var btn = share(de ? 'Jemand möchte dir etwas zeigen.' : 'A friend wants to show you something.',
+    'seedme://h/' + h[1], de ? 'Mehr erfahren' : 'Learn more');
   var full = '';
   btn.addEventListener('click', function () {
     setTimeout(function () { if (!document.hidden && full) document.getElementById('note').textContent = full; }, 1500);
   });
+  fetch('/help-about.json').then(function (r) { return r.json(); }).then(function (all) {
+    var what = (all[de ? 'de' : 'en'] || {})[h[1]];
+    if (what) document.getElementById('title').textContent = de
+      ? 'Jemand möchte dir etwas über ' + what + ' erzählen.'
+      : 'A friend wants to tell you about ' + what + '.';
+  }).catch(function () {});
   fetch('/help-lines.json').then(function (r) { return r.json(); }).then(function (all) {
     var line = (all[de ? 'de' : 'en'] || {})[h[1]] || (all.en || {})[h[1]];
     if (!line) return;
     full = line.replace(/<[^>]*>/g, '');
-    var first = full.split(/(?<=[.!?:])\s/)[0].replace(/:$/, '.');
-    if (first.length <= 60) document.getElementById('title').textContent = first;
   }).catch(function () {});
 }
 </script>
