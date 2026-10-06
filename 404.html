@@ -1,34 +1,58 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SeedMe</title><meta name="robots" content="noindex">
-<link rel="icon" href="/icon.png"><link rel="stylesheet" href="/style.css"></head><body><main>
+<link rel="icon" href="/icon.png"><link rel="stylesheet" href="/style.css">
+<style>
+/* Shared links (/i/, /h/): one short line, one big button, centred (2026-10-06). */
+main.share{min-height:100vh;min-height:100svh;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 24px}
+main.share img{width:84px;height:84px;border-radius:20px;margin-bottom:28px}
+main.share h1{font-size:34px;line-height:1.2;letter-spacing:-.02em;margin:0 0 32px;max-width:14em}
+.btn{display:inline-block;min-width:220px;padding:18px 32px;border-radius:999px;background:var(--accent);color:#fff;font-size:20px;font-weight:600;text-decoration:none}
+.btn:active{opacity:.8}
+@media (prefers-color-scheme:dark){.btn{color:#0e1117}}
+main.share .mute{margin-top:28px;max-width:26em;font-size:17px;line-height:1.5}
+</style></head><body><main id="main">
+<img src="/icon.png" alt="SeedMe">
 <h1 id="title">Not found</h1>
 <p id="go"><a href="/">SeedMe</a></p>
 <p class="mute" id="note"></p>
 <script>
+var de = (navigator.language || 'en').slice(0, 2) === 'de';
+function share(title, to, label) {
+  document.getElementById('main').className = 'share';
+  document.getElementById('title').textContent = title;
+  var a = document.createElement('a');
+  a.className = 'btn'; a.href = to; a.textContent = label;
+  var go = document.getElementById('go'); go.textContent = ''; go.appendChild(a);
+  return a;
+}
 // Friend invitations are https://seedme.food/i/<code> (tappable in every messenger).
-// GitHub Pages has no routes, so they land on this page; hand the code to the app.
+// The site has no routes, so they land on this page; hand the code to the app.
 var m = location.pathname.match(/^\/i\/([A-Za-z0-9]{12})\/?$/);
 if (m) {
   var to = 'seedme://add-friend?code=' + m[1];
   document.title = 'SeedMe Invitation';
-  document.getElementById('title').textContent = 'Friend invitation';
-  document.getElementById('go').innerHTML = '<a href="' + to + '">Open SeedMe</a>';
-  document.getElementById('note').textContent = 'Open this link on the iPhone that has SeedMe. It works once, for 24 hours.';
+  share(de ? 'Eine Einladung' : 'Friend invitation', to, de ? 'In SeedMe öffnen' : 'Open in SeedMe');
+  document.getElementById('note').textContent = de
+    ? 'Öffne den Link auf dem iPhone mit SeedMe. Er gilt einmal, 24 Stunden lang.'
+    : 'Open this link on the iPhone that has SeedMe. It works once, for 24 hours.';
   location.replace(to);
 }
-// A part of the app explained, shared from its help card: https://seedme.food/h/<part>
-// (2026-10-05). Opened where SeedMe is installed, the app takes the link itself; here the
-// explanation is shown as text, with a way into the app.
+// A part of the app, shared from its help card: https://seedme.food/h/<part> (2026-10-05).
+// Where SeedMe is installed the app takes the link itself. Here: the part's first sentence
+// and one button; the full explanation shows only if the app did not open.
 var h = location.pathname.match(/^\/h\/([A-Za-z]+)\/?$/);
 if (h) {
-  var app = 'seedme://h/' + h[1];
-  document.title = 'SeedMe';
-  document.getElementById('title').textContent = 'SeedMe';
-  document.getElementById('go').innerHTML = '<a href="' + app + '">Open SeedMe</a>';
-  var lang = (navigator.language || 'en').slice(0, 2) === 'de' ? 'de' : 'en';
+  var btn = share('SeedMe', 'seedme://h/' + h[1], de ? 'Tipp, um mehr zu erfahren' : 'Tap to learn more');
+  var full = '';
+  btn.addEventListener('click', function () {
+    setTimeout(function () { if (!document.hidden && full) document.getElementById('note').textContent = full; }, 1500);
+  });
   fetch('/help-lines.json').then(function (r) { return r.json(); }).then(function (all) {
-    var line = (all[lang] || {})[h[1]] || (all.en || {})[h[1]];
-    if (line) document.getElementById('note').textContent = line.replace(/<[^>]*>/g, '');
+    var line = (all[de ? 'de' : 'en'] || {})[h[1]] || (all.en || {})[h[1]];
+    if (!line) return;
+    full = line.replace(/<[^>]*>/g, '');
+    var first = full.split(/(?<=[.!?:])\s/)[0].replace(/:$/, '.');
+    if (first.length <= 60) document.getElementById('title').textContent = first;
   }).catch(function () {});
 }
 </script>
