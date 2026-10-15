@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>SeedMe Review</title>
+<link rel="icon" href="/seed-icon.png">
+<style>
+/* One card a screen, thumb-sized controls at the bottom; the site's own dark palette. */
+:root {
+  --bg: #0e1117; --card: #171b22; --line: #262b34; --fg: #ece6de; --mute: #9a938b;
+  --accent: #7cc35a; --yes: #7cc35a; --no: #e8806b; --sugg: #2a2617; --sugg-ink: #f0d27a;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root { --bg: #f6f4ef; --card: #ffffff; --line: #e2ddd2; --fg: #2a2620; --mute: #776f63;
+    --accent: #3f7d27; --yes: #2f7a43; --no: #b2402c; --sugg: #f6eccd; --sugg-ink: #6e5410; color-scheme: light; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); }
+body { font: 17px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-text-size-adjust: 100%; }
+main { max-width: 560px; margin: 0 auto; padding: calc(20px + env(safe-area-inset-top, 0px)) 16px calc(32px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 18px; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+header .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+header img { width: 32px; height: 32px; border-radius: 8px; }
+h1 { font-size: 24px; line-height: 1.25; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+.mute { color: var(--mute); font-size: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.sugg { background: var(--sugg); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sugg-ink); }
+.sugg p.text { font-size: 18px; }
+ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+details summary { cursor: pointer; color: var(--mute); font-size: 14px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+button { font: 600 17px/1 inherit; font-family: inherit; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); padding: 16px; min-height: 54px; cursor: pointer; touch-action: manipulation; }
+button:disabled { opacity: 0.5; }
+button:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.yes { background: var(--yes); border-color: var(--yes); color: var(--bg); }
+.no { color: var(--no); border-color: var(--no); background: transparent; }
+.ghost { background: transparent; border: 0; color: var(--mute); font-weight: 500; font-size: 15px; min-height: 0; padding: 8px; }
+.live { background: var(--no); border-color: var(--no); color: var(--bg); }
+/* 16px or more, so iOS does not zoom into the field. */
+textarea { width: 100%; min-height: 110px; font: 17px/1.45 inherit; font-family: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px; resize: vertical; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 15px; max-width: calc(100% - 32px); text-align: center; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <span class="brand"><img src="/seed-icon.png" alt="">SeedMe Review</span>
+    <button id="signout" class="ghost" hidden>Sign out</button>
+  </header>
+
+  <section id="signin" class="card" hidden>
+    <h1>Sign in</h1>
+    <p class="mute">Your 12 SeedMe words, as the app shows them. They stay on this phone: only the sign-in is sent, and the words are not kept.</p>
+    <form id="signin-form">
+      <textarea id="words" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="word word word …" aria-label="12 words"></textarea>
+    </form>
+    <button id="signin-go" class="yes" type="submit" form="signin-form">Sign In</button>
+  </section>
+
+  <section id="loading" class="card"><p class="mute">Loading the next decision…</p></section>
+
+  <section id="denied" class="card" hidden>
+    <h1>For beta testers</h1>
+    <p class="mute">This page is for SeedMe beta testers. Turn on Beta Tester in the app's Settings, then sign in again.</p>
+  </section>
+
+  <section id="done" class="card" hidden>
+    <h1>Nothing waiting</h1>
+    <p class="mute">Every decision has your verdict. New ones appear here as they come.</p>
+    <button id="again" onclick="location.reload()">Check Again</button>
+  </section>
+
+  <section id="deck" hidden>
+    <div class="card">
+      <h1 id="question"></h1>
+      <div class="sugg">
+        <span class="label">Suggestion</span>
+        <p class="text" id="suggestion"></p>
+        <p class="mute" id="sugg-why" hidden></p>
+      </div>
+      <div id="facts-box"><ul id="facts" class="mute"></ul></div>
+      <details id="before-box" hidden><summary>Earlier suggestions</summary><ul id="before" class="mute"></ul></details>
+      <p class="mute" id="approvals"></p>
+
+      <div id="verdict-row" class="row">
+        <button id="reject" class="no">Reject</button>
+        <button id="approve" class="yes">Approve</button>
+      </div>
+
+      <div id="why-box" hidden>
+        <div class="card" style="padding:0;border:0;gap:10px">
+          <p><strong>Why is it not right?</strong></p>
+          <textarea id="why" placeholder="Type, or record up to a minute"></textarea>
+          <p class="mute" id="rec-clock" hidden></p>
+          <div class="row">
+            <button id="record">Record</button>
+            <button id="why-send" class="no">Send</button>
+          </div>
+          <button id="why-cancel" class="ghost">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <p class="mute" style="text-align:center;margin-top:12px"><span id="counts"></span> · <button id="skip" class="ghost">Skip</button></p>
+  </section>
+</main>
+<div id="toast" class="toast" hidden></div>
+<script src="./app.js"></script>
+</body>
+</html>
