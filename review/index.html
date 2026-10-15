@@ -120,17 +120,20 @@ textarea { width: 100%; min-height: 110px; font: 20px/1.45 -apple-system, BlinkM
           <button id="reject" class="no">Reject</button>
           <button id="approve" class="yes">Approve</button>
         </div>
-        <button id="skip">Skip</button>
+        <div class="row">
+          <button id="feedback">Feedback</button>
+          <button id="skip">Skip</button>
+        </div>
       </div>
 
       <div id="why-box" hidden>
         <div class="card" style="padding:0;border:0;gap:10px">
-          <p><strong id="why-title">Why is it not right?</strong></p>
+          <p><strong id="why-title">Feedback</strong></p>
           <textarea id="why" placeholder="Type, or record up to a minute"></textarea>
           <p class="mute" id="rec-clock" hidden></p>
           <div class="row">
             <button id="record">Record</button>
-            <button id="why-send" class="no">Send</button>
+            <button id="why-send" class="yes">Send</button>
           </div>
           <button id="why-cancel" class="ghost">Cancel</button>
         </div>
