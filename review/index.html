@@ -19,30 +19,36 @@
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--bg); color: var(--fg); }
-body { font: 17px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-text-size-adjust: 100%; }
+body { font: 20px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-text-size-adjust: 100%; }
 main { max-width: 560px; margin: 0 auto; padding: calc(20px + env(safe-area-inset-top, 0px)) 16px calc(32px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 18px; }
 header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 header .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; }
 header img { width: 32px; height: 32px; border-radius: 8px; }
-h1 { font-size: 24px; line-height: 1.25; margin: 0; text-wrap: balance; }
+h1 { font-size: 30px; line-height: 1.2; margin: 0; text-wrap: balance; }
 p { margin: 0; }
-.mute { color: var(--mute); font-size: 14px; }
+.mute { color: var(--mute); font-size: 17px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
 .sugg { background: var(--sugg); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
-.label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sugg-ink); }
-.sugg p.text { font-size: 18px; }
+.label { font-size: 14px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sugg-ink); }
+.sugg p.text { font-size: 24px; line-height: 1.35; }
 ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
-details summary { cursor: pointer; color: var(--mute); font-size: 14px; }
+/* Everything past the question and the suggestion waits behind one chevron (Tamim, 2026-10-15: "this is too much"). */
+details summary { cursor: pointer; color: var(--mute); font-size: 17px; list-style: none; display: flex; align-items: center; gap: 6px; padding: 4px 0; }
+details summary::-webkit-details-marker { display: none; }
+details summary::after { content: "›"; font-size: 22px; line-height: 1; transition: transform 0.15s; }
+details[open] summary::after { transform: rotate(90deg); }
+#more-body { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.verdict { display: flex; flex-direction: column; gap: 10px; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-button { font: 600 17px/1 inherit; font-family: inherit; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); padding: 16px; min-height: 54px; cursor: pointer; touch-action: manipulation; }
+button { font: 600 20px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--fg); padding: 16px; min-height: 60px; cursor: pointer; touch-action: manipulation; }
 button:disabled { opacity: 0.5; }
 button:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .yes { background: var(--yes); border-color: var(--yes); color: var(--bg); }
 .no { color: var(--no); border-color: var(--no); background: transparent; }
-.ghost { background: transparent; border: 0; color: var(--mute); font-weight: 500; font-size: 15px; min-height: 0; padding: 8px; }
+.ghost { background: transparent; border: 0; color: var(--mute); font-weight: 500; font-size: 17px; min-height: 0; padding: 8px; }
 .live { background: var(--no); border-color: var(--no); color: var(--bg); }
 /* 16px or more, so iOS does not zoom into the field. */
-textarea { width: 100%; min-height: 110px; font: 17px/1.45 inherit; font-family: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px; resize: vertical; }
+textarea { width: 100%; min-height: 110px; font: 20px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px; resize: vertical; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 15px; max-width: calc(100% - 32px); text-align: center; }
 [hidden] { display: none !important; }
 </style>
@@ -82,15 +88,25 @@ textarea { width: 100%; min-height: 110px; font: 17px/1.45 inherit; font-family:
       <div class="sugg">
         <span class="label">Suggestion</span>
         <p class="text" id="suggestion"></p>
-        <p class="mute" id="sugg-why" hidden></p>
       </div>
-      <div id="facts-box"><ul id="facts" class="mute"></ul></div>
-      <details id="before-box" hidden><summary>Earlier suggestions</summary><ul id="before" class="mute"></ul></details>
-      <p class="mute" id="approvals"></p>
+      <details id="more"><summary>Details</summary>
+        <div id="more-body">
+          <p class="mute" id="approvals"></p>
+          <p class="mute" id="sugg-why" hidden></p>
+          <ul id="facts" class="mute"></ul>
+          <div id="before-box" hidden><p class="mute"><strong>Earlier suggestions</strong></p><ul id="before" class="mute"></ul></div>
+        </div>
+      </details>
 
-      <div id="verdict-row" class="row">
-        <button id="reject" class="no">Reject</button>
-        <button id="approve" class="yes">Approve</button>
+      <div id="verdict-row" class="verdict">
+        <div class="row">
+          <button id="reject" class="no">Reject</button>
+          <button id="approve" class="yes">Approve</button>
+        </div>
+        <div class="row">
+          <button id="speak" aria-label="Say what you think">🎙 Speak</button>
+          <button id="skip">Skip</button>
+        </div>
       </div>
 
       <div id="why-box" hidden>
@@ -106,7 +122,7 @@ textarea { width: 100%; min-height: 110px; font: 17px/1.45 inherit; font-family:
         </div>
       </div>
     </div>
-    <p class="mute" style="text-align:center;margin-top:12px"><span id="counts"></span> · <button id="skip" class="ghost">Skip</button></p>
+    <p class="mute" style="text-align:center;margin-top:12px" id="counts"></p>
   </section>
 </main>
 <div id="toast" class="toast" hidden></div>
