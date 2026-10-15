@@ -30,6 +30,7 @@ p { margin: 0; }
 .label { font-size: 14px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sugg-ink); }
 .sugg p.text { font-size: 24px; line-height: 1.35; }
 /* Food names stand apart from the words around them (Tamim, 2026-10-15). */
+.pic { width: 100%; aspect-ratio: 1; object-fit: contain; border-radius: 12px; background: var(--bg); }
 mark.name { background: var(--name-bg); color: var(--name-ink); font-weight: 700; border-radius: 6px; padding: 0 5px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
 /* Everything past the question and the suggestion waits behind one chevron (Tamim, 2026-10-15: "this is too much"). */
@@ -81,7 +82,8 @@ textarea { width: 100%; min-height: 110px; font: 20px/1.45 -apple-system, BlinkM
   <section id="deck" hidden>
     <div class="card">
       <h1 id="question"></h1>
-      <div class="sugg">
+      <img id="picture" class="pic" alt="" hidden>
+      <div class="sugg" id="sugg-box">
         <span class="label">Suggestion</span>
         <p class="text" id="suggestion"></p>
       </div>
