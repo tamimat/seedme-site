@@ -17,5 +17,10 @@
         ]
       }
     ]
+  },
+  "webcredentials": {
+    "apps": [
+      "M89YS97P95.com.seedme.health"
+    ]
   }
 }
